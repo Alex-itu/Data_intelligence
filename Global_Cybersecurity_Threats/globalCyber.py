@@ -1,4 +1,8 @@
 import pandas as pd
+import sklearn
+import sklearn.linear_model
+
+import shap as sh
 
 df = pd.read_csv("Global_Cybersecurity_Threats_2015-2024.csv")
 
@@ -63,7 +67,7 @@ def uk_attacks():
     uk = uknum.groupby("Defense Mechanism Used")["Attack Type"].value_counts()
     print(uk)
     print("\n")
-uk_attacks()
+# uk_attacks()
 
 # which country has the biggest loss? - UK
 def fin_loss():
@@ -88,4 +92,19 @@ def Atk_time():
 def atk_overall():
     over = df.groupby("Attack Type")["Country"].value_counts()
     print(over)
-atk_overall()
+# atk_overall()
+
+def plot_Attack_loss():
+    X = df["Attack Type"]
+    y = df["Financial Loss (in Million $)"]
+    
+    X100 = sh.utils.sample(X, 100)
+    
+    model = sklearn.linear_model.LinearRegression()
+    model.fit(X, y)
+    
+    print("Model coefficients:\n")
+    for i in range(X.shape[1]):
+        print(X.columns[i], "=", model.coef_[i].round(5))
+plot_Attack_loss()
+    
